@@ -22,9 +22,7 @@ class Player:
     def render(self, size, snake, food):
         for x in range(size):
             for y in range(size):
-                if food.present(x, y):
-                    print("#", end = " ")
-                elif snake.headPresent(x, y):
+                if snake.headPresent(x, y):
                     match snake.getDir():
                         case Dir.RIGHT.value:
                             print("\u25B6", end = " ")
@@ -36,6 +34,8 @@ class Player:
                             print("\u25BC", end = " ")
                 elif snake.present(x, y):
                     print("*", end = " ")
+                elif food.present(x, y):
+                    print("#", end = " ")
                 else:
                     print("_", end = " ")
             print()
@@ -158,9 +158,10 @@ class Game:
         self.player.render(self.size, self.snake, self.food)
         
     def regenerateFoodIfRequired(self):
-        self.food.regenerateIfRequired(self.size, self.snake)
+        if not self.snakeAtMaxLength():
+            self.food.regenerateIfRequired(self.size, self.snake)
         
-    def win(self):
+    def snakeAtMaxLength(self):
         return self.snake.getLength() == (self.size ** 2)
             
     def play(self):
@@ -192,7 +193,7 @@ class Game:
                 case _:
                     pass
             
-            if self.win():
+            if self.snakeAtMaxLength():
                 result = 1
                 break
             
@@ -209,4 +210,3 @@ player = Player(name)
 size = int(input("Enter grid size: "))
 game = Game(size, player)
 game.play()
-
